@@ -16,7 +16,9 @@ import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.lessThan;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.hamcrest.Matchers;
@@ -147,4 +149,25 @@ public class UserJsonTest {
 			.body("salary.findAll{it !=null}.sum()", allOf(Matchers.greaterThan(3000d),lessThan(5000d)))
 			;
 	}
+	
+	
+	@Test
+	public void devoUnirJsonPathComJava() {
+		String uri = "http://restapi.wcaquino.me/users";
+		ArrayList<String> nomes = 
+				given()
+				.when()
+					.get(uri)
+					.then()
+						.statusCode(200)
+						.extract().path("name.findAll{ it.startsWith('Maria')}");
+		
+		assertEquals(1, nomes.size());
+		assertTrue(nomes.get(0).equalsIgnoreCase("Maria Joaquina"));
+		assertEquals(nomes.get(0).toUpperCase(), "maria joaquina".toUpperCase());
+					
+	}
+	
+	
+	
 }
