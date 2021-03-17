@@ -1,8 +1,11 @@
 package br.ce.wcaquino.rest;
 
 import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasItem;
 import static org.hamcrest.Matchers.hasItems;
+import static org.hamcrest.Matchers.hasXPath;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -60,7 +63,6 @@ public class UserXMLTest {
 	
 	
 	@Test
-	
 	public void devoFazerPesquisasAvancadasComXMLEJava() {
 		ArrayList<NodeImpl> names = given()
 				.when()
@@ -76,5 +78,35 @@ public class UserXMLTest {
 		
 		
 	}
+	
+	
+	@Test
+	public void devoFazerPesquisasAvancadasComXpath() {
+		String uri = "https://restapi.wcaquino.me/usersXML";
+		
+		
+		given()
+		.when()
+			.get(uri)
+		.then()
+			.statusCode(200)
+			.body(hasXPath("count(/users/user)",is("3")))
+			.body(hasXPath("(/users/user[@id='1'])"))
+			.body(hasXPath("(//user[@id='2'])"))
+			.body(hasXPath("//name[text() = 'Luizinho']/../../name",is("Ana Julia")))
+				.body(hasXPath("//name[text()='Ana Julia']/following-sibling::filhos",
+						allOf(containsString("Zezinho"), containsString("Luizinho"))))
+			.body(hasXPath("/users/user/name",is("João da Silva")))	
+			.body(hasXPath("//name",is("João da Silva")))
+			.body(hasXPath("/users/user[2]/name",is("Maria Joaquina")))
+			.body(hasXPath("/users/user[last()]/name",is("Ana Julia")))
+			.body(hasXPath("count(/users/user/name[contains(., 'n')])",is("2")))
+			.body(hasXPath("//user[age < 24]/name",is("Ana Julia")))
+			.body(hasXPath("//user[age > 20 and age < 30]/name",is("Maria Joaquina")))
+			;
+		
+	}
+	
+	
 
 }
