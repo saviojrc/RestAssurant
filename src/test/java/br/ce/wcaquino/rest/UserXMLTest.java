@@ -2,6 +2,8 @@ package br.ce.wcaquino.rest;
 
 import static io.restassured.RestAssured.baseURI;
 import static io.restassured.RestAssured.given;
+import static io.restassured.RestAssured.requestSpecification;
+import static io.restassured.RestAssured.responseSpecification;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasItem;
@@ -16,14 +18,32 @@ import java.util.ArrayList;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import io.restassured.builder.RequestSpecBuilder;
+import io.restassured.builder.ResponseSpecBuilder;
+import io.restassured.filter.log.LogDetail;
 import io.restassured.internal.path.xml.NodeImpl;
+import io.restassured.specification.RequestSpecification;
+import io.restassured.specification.ResponseSpecification;
 
 public class UserXMLTest {
+	
+	private static RequestSpecification reqSpec;
+	private static ResponseSpecification resSpec;
 	
 	
 	@BeforeClass
 	public static void setup() {
-		baseURI ="https://restapi.wcaquino.me"; 
+		baseURI = "https://restapi.wcaquino.me";
+		RequestSpecBuilder reqBuilder = new RequestSpecBuilder();
+		reqBuilder.log(LogDetail.ALL);
+		reqSpec = reqBuilder.build();
+
+		ResponseSpecBuilder resBuilder = new ResponseSpecBuilder();
+		resBuilder.expectStatusCode(200);
+		resSpec = resBuilder.build();
+
+		requestSpecification = reqSpec;
+		responseSpecification = resSpec;
 	}
 	
 	@Test
